@@ -1,4 +1,4 @@
-package com.ville.demo;
+package com.ville.connecte;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
