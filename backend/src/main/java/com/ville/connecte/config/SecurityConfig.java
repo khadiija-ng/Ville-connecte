@@ -1,4 +1,5 @@
 package com.ville.connecte.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,16 +37,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsSource))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/utilisateur/register", "/api/utilisateur/login", "/error")
-                        .permitAll() // Permettre l'accès public à ces routes
-                        .anyRequest().authenticated() // authentification requise pour toutes les autres requêtes par
-                                                      // défaut
+                .requestMatchers("/api/utilisateur/register", "/api/utilisateur/login", "/error", "/swagger-ui/**",
+                        "/v3/api-docs/**")
+                .permitAll() // Permettre l'accès public à ces routes
+                .anyRequest().authenticated() // authentification requise pour toutes les autres requêtes par
+                // défaut
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Utiliser une politique sans session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Utiliser une politique sans session
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // Ajouter le filtre JWT
-                                                                                            // avant l'authentification
+                // avant l'authentification
                 .build();
     }
 
@@ -54,13 +56,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider
+                = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
-    
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
