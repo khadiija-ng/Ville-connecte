@@ -1,5 +1,7 @@
 package com.ville.connecte.controller.dto.response;
+import java.time.LocalDate;
 
-public record UtilisateurResponse() {
+
+public record UtilisateurResponse(String firstname,String lastname,String lieuDeNaissance,LocalDate dateDeNaissance,String email ) {
 
 }
