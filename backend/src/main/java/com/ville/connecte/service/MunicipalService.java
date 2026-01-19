@@ -1,5 +1,7 @@
 package com.ville.connecte.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ville.connecte.controller.dto.request.MunicipalRequest;
@@ -41,4 +43,17 @@ public class MunicipalService {
                 municipal.getAddress()
         );
     }
+
+    public List<MunicipalResponse> getAll() {
+
+        return municipalRepository.findAll()
+                .stream()
+                .map(m -> new MunicipalResponse(
+                m.getId(),
+                m.getName(),
+                m.getAddress()
+        ))
+                .toList();
+    }
+
 }

@@ -13,6 +13,8 @@ import com.ville.connecte.model.Role;
 import com.ville.connecte.model.Utilisateur;
 import com.ville.connecte.repository.UtilisateurRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UtilisateurService {
 
@@ -50,7 +52,7 @@ public class UtilisateurService {
 
     public UtilisateurResponse findById(Long id) {
         Utilisateur utilisateur = utilisateurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
         return new UtilisateurResponse(
                 utilisateur.getFirstname(),
@@ -77,7 +79,7 @@ public class UtilisateurService {
     public UtilisateurResponse update(Long id, UtilisateurRequest dto) {
 
         Utilisateur utilisateur = utilisateurRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
         utilisateur.setFirstname(dto.firstname());
         utilisateur.setLastname(dto.lastname());
@@ -98,7 +100,7 @@ public class UtilisateurService {
 
     public void delete(Long id) {
         if (!utilisateurRepository.existsById(id)) {
-            throw new RuntimeException("Utilisateur non trouvé");
+            throw new EntityNotFoundException("Utilisateur non trouvé");
         }
         utilisateurRepository.deleteById(id);
     }

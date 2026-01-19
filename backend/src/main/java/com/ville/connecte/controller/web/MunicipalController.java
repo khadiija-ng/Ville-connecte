@@ -1,6 +1,9 @@
 package com.ville.connecte.controller.web;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,26 +17,31 @@ import com.ville.connecte.service.MunicipalService;
 
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/api/municipal")
 public class MunicipalController {
-
+    
     private final MunicipalService municipalService;
-
+    
     public MunicipalController(MunicipalService municipalService) {
         this.municipalService = municipalService;
     }
-
+    
     @PostMapping
     public ResponseEntity<?> create(
-            @Valid @RequestBody MunicipalRequest request
+        @Valid @RequestBody MunicipalRequest request
     ) {
         return ResponseEntity.ok(municipalService.create(request));
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<MunicipalResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(municipalService.getById(id));
+    }
+    
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<MunicipalResponse>> getAll() {
+        return ResponseEntity.ok(municipalService.getAll());
     }
 }

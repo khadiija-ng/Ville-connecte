@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,6 +21,7 @@ import com.ville.connecte.filter.JwtAuthFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     public final JwtAuthFilter jwtAuthFilter;
@@ -38,7 +40,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsSource))
                 .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/api/utilisateur/register", "/api/utilisateur/login", "/error", "/swagger-ui/**",
-                        "/v3/api-docs/**")
+                       "/v3/api-docs", "/v3/api-docs/**")
                 .permitAll() // Permettre l'accès public à ces routes
                 .anyRequest().authenticated() // authentification requise pour toutes les autres requêtes par
                 // défaut
