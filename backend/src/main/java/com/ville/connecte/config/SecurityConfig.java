@@ -19,6 +19,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.ville.connecte.filter.JwtAuthFilter;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.ville.connecte.filter.JwtAuthFilter;
+
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -31,25 +39,36 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsSource)
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // URL de votre frontend Vite
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource)
             throws Exception {
         System.out.println("---------------------------filter");
 
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsSource))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/api/utilisateur/register", "/api/utilisateur/login", "/error", "/swagger-ui/**",
                        "/v3/api-docs", "/v3/api-docs/**")
                 .permitAll() // Permettre l'accès public à ces routes
-                .anyRequest().authenticated() // authentification requise pour toutes les autres requêtes par
-                // défaut
+                .anyRequest().authenticated() // authentification requise pour toutes les autres requêtes
                 )
                 .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Utiliser une politique sans session
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // Ajouter le filtre JWT
-                // avant l'authentification
                 .build();
     }
 
@@ -65,9 +84,9 @@ public class SecurityConfig {
         return provider;
     }
 
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }

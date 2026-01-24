@@ -40,6 +40,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        String path = request.getServletPath();
+
+// 🔓 ROUTES PUBLIQUES → NE PAS TOUCHER AU JWT
+if (path.equals("/api/utilisateur/login")
+        || path.equals("/api/utilisateur/register")
+        || path.equals("/api/utilisateur/validate")
+        || path.equals("/error")
+        || path.startsWith("/swagger-ui")
+        || path.startsWith("/v3/api-docs")) {
+
+    filterChain.doFilter(request, response);
+    return;
+}
 
         String authHeader = request.getHeader("Authorization");
 
